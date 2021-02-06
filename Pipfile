@@ -8,6 +8,7 @@ berserk = "*"
 flake8 = "*"
 black = "*"
 jedi = "*"
+flask = "*"
 
 [dev-packages]
 pylint = "*"
