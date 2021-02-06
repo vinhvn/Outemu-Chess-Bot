@@ -1,5 +1,6 @@
 import threading
 from pprint import pprint
+from time import sleep
 
 
 class Game(threading.Thread):
@@ -29,6 +30,7 @@ class Game(threading.Thread):
         for event in self.stream:
             if event.get("type") == "gameState":
                 # pprint("GAMESTATE: {}".format(event))
+                print("game state received")
                 self.handle_state_change(event)
             elif event.get("type") == "chatLine":
                 # pprint("CHATLINE: {}".format(event))
@@ -40,7 +42,7 @@ class Game(threading.Thread):
     def make_move(self, move):
         try:
             self.bot.make_move(self.game_id, move)
-            self.bot_turn = False
+            return True
         except:
             return False
 
@@ -48,10 +50,45 @@ class Game(threading.Thread):
         self.move_counter += 1
         print("MOVE COUNTER: {} --- COLOR: {}".format(self.move_counter, self.color))
         if self.color == "white" and self.move_counter % 2 != 0:
-            self.bot_turn = True
-        if self.color == "black" and self.move_counter % 2 == 0:
-            self.bot_turn = True
+            move_made = False
+            with open("turn.txt", "w+") as f:
+                f.write("True")
+            while not move_made:
+                print("MOVEMADE: {}".format(move_made))
+                print("bot turn... waiting 15 seconds")
+                sleep(15)
+                print("reading from queue")
+                with open("moves.txt", "r") as f:
+                    for move in f.readlines():
+                        print("trying move {}".format(move))
+                        sleep(1)
+                        if self.make_move(move):
+                            move_made = True
+                            break
+                    if move_made:
+                        break
 
+        if self.color == "black" and self.move_counter % 2 == 0:
+            move_made = False
+            with open("turn.txt", "w+") as f:
+                f.write("True")
+            while not move_made:
+                print("MOVEMADE: {}".format(move_made))
+                print("bot turn... waiting 15 seconds")
+                sleep(15)
+                print("reading from queue")
+                with open("moves.txt", "r") as f:
+                    for move in f.readlines():
+                        print("trying move {}".format(move))
+                        sleep(1)
+                        if self.make_move(move):
+                            move_made = True
+                            break
+                    if move_made:
+                        break
+
+        with open("turn.txt", "w+") as f:
+            f.write("False")
         pass
 
     def handle_chat_line(self, chat_line):
