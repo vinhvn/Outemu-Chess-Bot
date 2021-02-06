@@ -33,7 +33,7 @@ var onConnectedHandler = function (address, port) {
 };
 var currentTurn = function () {
     var result = JSON.parse(fs.readFileSync('./turn.txt', 'utf8'));
-    return result == "True";
+    return result.toString() == "True";
 };
 var validMove = function (s) {
     var regex = /^[a-h][1-8][a-h][1-8]$/g;

@@ -36,7 +36,7 @@ const onConnectedHandler = (address: string, port: number) => {
 
 const currentTurn = () => {
   const result = JSON.parse(fs.readFileSync('./turn.txt', 'utf8'))
-  return result == "True"
+  return result.toString() == "True"
 }
 
 const validMove = (s: string) => {
