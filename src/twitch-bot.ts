@@ -54,7 +54,11 @@ const addMove = (move: string) => {
 }
 
 const queueMove = () => {
-  console.log('> Queueing a move...')
+  console.log(`> Queueing a move...`)
+  if (queue.length === 0) {
+    console.log('>> No moves in queue. Aborting...')
+    return;
+  }
   let max = 0
   let qMove = ""
   // find max

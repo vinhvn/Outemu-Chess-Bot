@@ -49,7 +49,11 @@ var addMove = function (move) {
     }
 };
 var queueMove = function () {
-    console.log('> Queueing a move...');
+    console.log("> Queueing a move...");
+    if (queue.length === 0) {
+        console.log('>> No moves in queue. Aborting...');
+        return;
+    }
     var max = 0;
     var qMove = "";
     // find max
