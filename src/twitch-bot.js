@@ -50,7 +50,7 @@ var onConnectedHandler = function (address, port) {
 };
 var currentTurn = function () {
     var result = fs.readFileSync('./turn.txt', 'utf8');
-    return result.toString() == "True";
+    return result.toString().trim() == "True";
 };
 var validMove = function (s) {
     var regex = /^[a-h][1-8][a-h][1-8]$/g;
