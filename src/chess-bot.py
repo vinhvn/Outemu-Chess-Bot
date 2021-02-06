@@ -26,17 +26,20 @@ def game_listener():
 
 
 def game_controller(game):
+    print("CONTROLLER")
     while True:
-        print("writing bot status")
+        # print("writing bot status")
         with open("turn.txt", "w+") as f:
             f.write(str(game.get_bot_turn()))
-        print("checking bot turn")
+        # print("checking bot turn")
+        print("BOT TURN: {}".format(game.get_bot_turn()))
         if game.get_bot_turn():
             print("bot turn... waiting 15 seconds")
             sleep(15)
             print("reading from queue")
             with open("moves.txt", "r") as f:
                 for move in f.readlines():
+                    print("trying move {}".format(move))
                     if game.make_move(move):
                         break
 

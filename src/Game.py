@@ -46,7 +46,7 @@ class Game(threading.Thread):
 
     def handle_state_change(self, game_state):
         self.move_counter += 1
-
+        print("MOVE COUNTER: {} --- COLOR: {}".format(self.move_counter, self.color))
         if self.color == "white" and self.move_counter % 2 != 0:
             self.bot_turn = True
         if self.color == "black" and self.move_counter % 2 == 0:
