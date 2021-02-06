@@ -1,6 +1,7 @@
 import berserk
 import json
 from Game import Game
+import os
 
 
 with open("./envs.json", "r") as f:
@@ -8,6 +9,7 @@ with open("./envs.json", "r") as f:
 
 session = berserk.TokenSession(TOKEN)
 bot = berserk.clients.Bots(session)
+users = berserk.clients.Users(session)
 
 
 def game_listener():
@@ -15,7 +17,9 @@ def game_listener():
         if event.get("type") == "challenge":
             bot.accept_challenge(event.get("challenge").get("id"))
         elif event.get("type") == "gameStart":
-            game = Game(bot, event.get("game").get("id"))
+            if os.path.exists("./moves.txt"):
+                os.remove("./moves.txt")
+            game = Game(bot, users, event.get("game").get("id"))
             game.run()
 
 
