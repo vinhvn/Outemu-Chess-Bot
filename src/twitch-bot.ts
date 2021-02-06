@@ -10,14 +10,13 @@ const timer = setInterval(() => {
   if (!currentTurn()) {
     queue = [];
     votes = {};
+    writeQueue([]);
   }
 }, 1000)
 
 const onMessageHandler = (target: any, context: any, msg: string, self: any) => {
   // don't listen to self
   if (self || !currentTurn()) {
-    queue = [];
-    votes = {};
     return;
   }
   // remove spaces
@@ -96,15 +95,9 @@ const clearVote = (dict: Record<string, number>, move: string) => {
 
 const writeQueue = (queue: string[]) => {
   console.log('> Writing queue to `moves.txt`...')
-  if (queue.length === 0) {
-    console.log('>> No moves in queue. Aborting...')
-    return;
-  }
   const data = formatQueue(queue)
   const options = { flag: 'w' }
-  fs.writeFile('moves.txt', data, options, (err) => {
-    console.error('>> ERROR: ', err)
-  })
+  fs.writeFileSync('moves.txt', data, options)
 }
 
 const formatQueue = (queue: string[]) => {

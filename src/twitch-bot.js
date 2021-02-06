@@ -21,13 +21,12 @@ var timer = setInterval(function () {
     if (!currentTurn()) {
         queue = [];
         votes = {};
+        writeQueue([]);
     }
 }, 1000);
 var onMessageHandler = function (target, context, msg, self) {
     // don't listen to self
     if (self || !currentTurn()) {
-        queue = [];
-        votes = {};
         return;
     }
     // remove spaces
@@ -98,15 +97,9 @@ var clearVote = function (dict, move) {
 };
 var writeQueue = function (queue) {
     console.log('> Writing queue to `moves.txt`...');
-    if (queue.length === 0) {
-        console.log('>> No moves in queue. Aborting...');
-        return;
-    }
     var data = formatQueue(queue);
     var options = { flag: 'w' };
-    fs.writeFile('moves.txt', data, options, function (err) {
-        console.error('>> ERROR: ', err);
-    });
+    fs.writeFileSync('moves.txt', data, options);
 };
 var formatQueue = function (queue) {
     var output = "";
