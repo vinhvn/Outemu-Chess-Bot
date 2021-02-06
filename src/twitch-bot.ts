@@ -7,7 +7,9 @@ import * as fs from 'fs'
 let queue: string[] = [];
 const votes: { [key: string]: number } = {};
 const timer = setInterval(() => {
-  queue = [];
+  if (!currentTurn()) {
+    queue = [];
+  }
 }, 5000)
 
 const onMessageHandler = (target: any, context: any, msg: string, self: any) => {
