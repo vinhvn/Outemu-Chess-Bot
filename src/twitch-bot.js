@@ -17,6 +17,9 @@ var fs = require("fs");
 // Main
 var queue = [];
 var votes = {};
+var timer = setInterval(function () {
+    queue = [];
+}, 5000);
 var onMessageHandler = function (target, context, msg, self) {
     // don't listen to self
     if (self || !currentTurn()) {
