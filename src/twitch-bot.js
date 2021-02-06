@@ -20,12 +20,14 @@ var votes = {};
 var timer = setInterval(function () {
     if (!currentTurn()) {
         queue = [];
+        votes = {};
     }
 }, 5000);
 var onMessageHandler = function (target, context, msg, self) {
     // don't listen to self
     if (self || !currentTurn()) {
         queue = [];
+        votes = {};
         return;
     }
     // remove spaces

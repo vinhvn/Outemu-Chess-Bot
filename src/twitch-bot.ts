@@ -5,10 +5,11 @@ import * as fs from 'fs'
 // Main
 
 let queue: string[] = [];
-const votes: { [key: string]: number } = {};
+let votes: { [key: string]: number } = {};
 const timer = setInterval(() => {
   if (!currentTurn()) {
     queue = [];
+    votes = {};
   }
 }, 5000)
 
@@ -16,6 +17,7 @@ const onMessageHandler = (target: any, context: any, msg: string, self: any) => 
   // don't listen to self
   if (self || !currentTurn()) {
     queue = [];
+    votes = {};
     return;
   }
   // remove spaces
