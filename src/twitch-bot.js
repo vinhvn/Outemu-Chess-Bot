@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 exports.__esModule = true;
 var tmi = require("tmi.js");
 var envs_json_1 = require("./envs.json");
@@ -6,9 +17,6 @@ var fs = require("fs");
 // Main
 var queue = [];
 var votes = {};
-var timer = setInterval(function () {
-    queueMove();
-}, 5000);
 var onMessageHandler = function (target, context, msg, self) {
     // don't listen to self
     if (self || !currentTurn()) {
@@ -28,6 +36,7 @@ var onMessageHandler = function (target, context, msg, self) {
     }
     // add move to queue
     addMove(move);
+    sortQueue();
 };
 var onConnectedHandler = function (address, port) {
     console.log("> Connected to " + address + ":" + port);
@@ -48,48 +57,51 @@ var addMove = function (move) {
         votes[move] += 1;
     }
 };
-var queueMove = function () {
+var sortQueue = function () {
     console.log("> Queueing a move...");
-    if (queue.length === 0) {
-        console.log('>> No moves in queue. Aborting...');
+    if (Object.keys(votes).length === 0) {
+        console.log('>> No moves in votes. Aborting...');
         return;
     }
-    var max = 0;
-    var qMove = "";
-    // find max
-    for (var move in votes) {
-        if (votes[move] > max) {
-            max = votes[move];
-            qMove = move;
+    queue = [];
+    var copy = __assign({}, votes);
+    while (queue.length < Object.keys(votes).length) {
+        var max = 0;
+        var qMove = "";
+        // find max
+        for (var move in copy) {
+            if (copy[move] > max) {
+                max = copy[move];
+                qMove = move;
+            }
         }
+        queue.push(qMove);
+        clearVote(copy, qMove);
     }
-    // push to q and clear it from votes
-    queue.push(qMove);
-    clearVote(qMove);
-    writeQueue();
+    writeQueue(queue);
 };
-var clearVote = function (move) {
-    if (Object.prototype.hasOwnProperty.call(votes, move)) {
-        delete votes[move];
+var clearVote = function (dict, move) {
+    if (Object.prototype.hasOwnProperty.call(dict, move)) {
+        delete dict[move];
         return true;
     }
     else {
         return false;
     }
 };
-var writeQueue = function () {
+var writeQueue = function (queue) {
     console.log('> Writing queue to `moves.txt`...');
     if (queue.length === 0) {
         console.log('>> No moves in queue. Aborting...');
         return;
     }
-    var data = formatQueue();
+    var data = formatQueue(queue);
     var options = { flag: 'w' };
     fs.writeFile('moves.txt', data, options, function (err) {
         console.error('>> ERROR: ', err);
     });
 };
-var formatQueue = function () {
+var formatQueue = function (queue) {
     var output = "";
     for (var _i = 0, queue_1 = queue; _i < queue_1.length; _i++) {
         var move = queue_1[_i];

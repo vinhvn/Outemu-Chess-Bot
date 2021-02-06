@@ -6,9 +6,6 @@ import * as fs from 'fs'
 
 let queue: string[] = [];
 const votes: { [key: string]: number } = {};
-const timer = setInterval(() => {
-  queueMove()
-}, 5000)
 
 const onMessageHandler = (target: any, context: any, msg: string, self: any) => {
   // don't listen to self
@@ -21,7 +18,7 @@ const onMessageHandler = (target: any, context: any, msg: string, self: any) => 
   // message should only contain move
   const splits = move.split(' ')
   if (splits.length > 1) {
-    move = splits[0];
+    move = splits[0]
   }
   // check if move is valid
   if (!validMove(move)) {
@@ -29,6 +26,7 @@ const onMessageHandler = (target: any, context: any, msg: string, self: any) => 
   }
   // add move to queue
   addMove(move)
+  sortQueue()
 }
 
 const onConnectedHandler = (address: string, port: number) => {
@@ -53,50 +51,56 @@ const addMove = (move: string) => {
   }
 }
 
-const queueMove = () => {
+const sortQueue = () => {
   console.log(`> Queueing a move...`)
-  if (queue.length === 0) {
-    console.log('>> No moves in queue. Aborting...')
+  if (Object.keys(votes).length === 0) {
+    console.log('>> No moves in votes. Aborting...')
     return;
   }
-  let max = 0
-  let qMove = ""
-  // find max
-  for (const move in votes) {
-    if (votes[move] > max) {
-      max = votes[move]
-      qMove = move
+
+  queue = []
+  const copy = { ...votes }
+
+  while (queue.length < Object.keys(votes).length) {
+    let max = 0
+    let qMove = ""
+    // find max
+    for (const move in copy) {
+      if (copy[move] > max) {
+        max = copy[move]
+        qMove = move
+      }
     }
+    queue.push(qMove)
+    clearVote(copy, qMove)
   }
-  // push to q and clear it from votes
-  queue.push(qMove)
-  clearVote(qMove)
-  writeQueue()
+
+  writeQueue(queue)
 }
 
-const clearVote = (move: string) => {
-  if (Object.prototype.hasOwnProperty.call(votes, move)) {
-    delete votes[move]
+const clearVote = (dict: Record<string, number>, move: string) => {
+  if (Object.prototype.hasOwnProperty.call(dict, move)) {
+    delete dict[move]
     return true
   } else {
     return false
   }
 }
 
-const writeQueue = () => {
+const writeQueue = (queue: string[]) => {
   console.log('> Writing queue to `moves.txt`...')
   if (queue.length === 0) {
     console.log('>> No moves in queue. Aborting...')
     return;
   }
-  const data = formatQueue()
+  const data = formatQueue(queue)
   const options = { flag: 'w' }
   fs.writeFile('moves.txt', data, options, (err) => {
     console.error('>> ERROR: ', err)
   })
 }
 
-const formatQueue = () => {
+const formatQueue = (queue: string[]) => {
   let output = ""
   for (const move of queue) {
     output += `${move}\n`
