@@ -11,13 +11,13 @@ const timer = setInterval(() => {
     queue = [];
     votes = {};
   }
-}, 5000)
+}, 1000)
 
 const onMessageHandler = (target: any, context: any, msg: string, self: any) => {
   // don't listen to self
   if (self || !currentTurn()) {
-    queue = [];
-    votes = {};
+    // queue = [];
+    // votes = {};
     return;
   }
   // remove spaces

@@ -22,12 +22,12 @@ var timer = setInterval(function () {
         queue = [];
         votes = {};
     }
-}, 5000);
+}, 1000);
 var onMessageHandler = function (target, context, msg, self) {
     // don't listen to self
     if (self || !currentTurn()) {
-        queue = [];
-        votes = {};
+        // queue = [];
+        // votes = {};
         return;
     }
     // remove spaces
