@@ -81,8 +81,13 @@ const clearVote = (move: string) => {
 
 const writeQueue = () => {
   console.log('> Writing queue to `moves.txt`...')
+  if (queue.length === 0) {
+    console.log('>> No moves in queue. Aborting...')
+    return;
+  }
   const data = formatQueue()
-  fs.writeFile('moves.txt', data, (err) => {
+  const options = { flag: 'w' }
+  fs.writeFile('moves.txt', data, options, (err) => {
     console.error('>> ERROR: ', err)
   })
 }

@@ -75,8 +75,13 @@ var clearVote = function (move) {
 };
 var writeQueue = function () {
     console.log('> Writing queue to `moves.txt`...');
+    if (queue.length === 0) {
+        console.log('>> No moves in queue. Aborting...');
+        return;
+    }
     var data = formatQueue();
-    fs.writeFile('moves.txt', data, function (err) {
+    var options = { flag: 'w' };
+    fs.writeFile('moves.txt', data, options, function (err) {
         console.error('>> ERROR: ', err);
     });
 };
