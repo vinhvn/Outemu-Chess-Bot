@@ -4,7 +4,7 @@ import * as fs from 'fs'
 
 // Main
 
-const queue: string[] = [];
+let queue: string[] = [];
 const votes: { [key: string]: number } = {};
 const timer = setInterval(() => {
   queueMove()
@@ -13,6 +13,7 @@ const timer = setInterval(() => {
 const onMessageHandler = (target: any, context: any, msg: string, self: any) => {
   // don't listen to self
   if (self || !currentTurn()) {
+    queue = [];
     return;
   }
   // remove spaces
@@ -35,7 +36,7 @@ const onConnectedHandler = (address: string, port: number) => {
 }
 
 const currentTurn = () => {
-  const result = JSON.parse(fs.readFileSync('./turn.txt', 'utf8'))
+  const result = fs.readFileSync('./turn.txt', 'utf8')
   return result.toString() == "True"
 }
 
@@ -53,6 +54,7 @@ const addMove = (move: string) => {
 }
 
 const queueMove = () => {
+  console.log('> Queueing a move...')
   let max = 0
   let qMove = ""
   // find max
@@ -78,9 +80,10 @@ const clearVote = (move: string) => {
 }
 
 const writeQueue = () => {
+  console.log('> Writing queue to `moves.txt`...')
   const data = formatQueue()
   fs.writeFile('moves.txt', data, (err) => {
-    console.log(err)
+    console.error('>> ERROR: ', err)
   })
 }
 

@@ -12,6 +12,7 @@ var timer = setInterval(function () {
 var onMessageHandler = function (target, context, msg, self) {
     // don't listen to self
     if (self || !currentTurn()) {
+        queue = [];
         return;
     }
     // remove spaces
@@ -32,7 +33,7 @@ var onConnectedHandler = function (address, port) {
     console.log("> Connected to " + address + ":" + port);
 };
 var currentTurn = function () {
-    var result = JSON.parse(fs.readFileSync('./turn.txt', 'utf8'));
+    var result = fs.readFileSync('./turn.txt', 'utf8');
     return result.toString() == "True";
 };
 var validMove = function (s) {
@@ -48,6 +49,7 @@ var addMove = function (move) {
     }
 };
 var queueMove = function () {
+    console.log('> Queueing a move...');
     var max = 0;
     var qMove = "";
     // find max
@@ -72,9 +74,10 @@ var clearVote = function (move) {
     }
 };
 var writeQueue = function () {
+    console.log('> Writing queue to `moves.txt`...');
     var data = formatQueue();
     fs.writeFile('moves.txt', data, function (err) {
-        console.log(err);
+        console.error('>> ERROR: ', err);
     });
 };
 var formatQueue = function () {
