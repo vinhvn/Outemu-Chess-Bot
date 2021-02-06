@@ -26,8 +26,8 @@ var timer = setInterval(function () {
 var onMessageHandler = function (target, context, msg, self) {
     // don't listen to self
     if (self || !currentTurn()) {
-        // queue = [];
-        // votes = {};
+        queue = [];
+        votes = {};
         return;
     }
     // remove spaces
